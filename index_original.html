@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Bowlby+One" rel="stylesheet">
+    <link rel="stylesheet" href="leaflet/leaflet.css" />
+
+
+    <link rel="stylesheet" href="Leaflet.EasyButton/src/easy-button.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+
+    <script src="leaflet/leaflet.js"></script>
+
+    <link href="style.css" rel="stylesheet" type="text/css">
+
+
+    <script src="Leaflet.EasyButton/src/easy-button.js"></script>
+
+    <link rel="stylesheet" href="MarkerCluster/MarkerCluster.css" />
+    <link rel="stylesheet" href="MarkerCluster/MarkerCluster.Default.css" />
+    <script src="MarkerCluster/leaflet.markercluster.js"></script>
+
+    <link rel="stylesheet" href="noUiSlider/nouislider.min.css" />
+        <script src="data/settings.js"></script>
+    <script src="noUiSlider/nouislider.min.js"></script>
+
+    <script src="wNumb/wNumb.js"></script>
+
+
+    <script src="data/metanastes.js"></script>
+	<script src="data/katataksi.js"></script>
+	<script src="data/thanatos.js"></script>
+	<script src="data/tafi.js"></script>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+  
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
+
+
+
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            background-image: url("black_denim.jpg");
+        }
+
+        html,
+        body,
+        #map {
+            height: 95%;
+        }
+    </style>
+
+
+</head>
+
+<body>
+<table id="table_id" class="display">
+    <thead>
+        <tr>
+            <th>Column 1</th>
+            <th>Column 2</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Row 1 Data 1</td>
+            <td>Row 1 Data 2</td>
+        </tr>
+        <tr>
+            <td>Row 2 Data 1</td>
+            <td>Row 2 Data 2</td>
+        </tr>
+    </tbody>
+</table>
+
+    <style>
+        .bar {
+            fill: steelblue;
+        }
+
+        .bar:hover {
+            fill: brown;
+        }
+
+        .axis--x path {
+            display: none;
+        }
+    </style>
+
+
+    <script>
+    </script>
+
+    <div id="slider" style="top: 50px; right: 1px; margin: 10px 25px;"></div>
+
+
+    <div id="label" style="position: relative; top: 70px;">
+        <p id="period"></p>
+    </div>
+
+    <div hidden id="video" style="position: relative; top: 75px;">
+        <input id="btnvideo" type="button" value="Play Video" onclick="timeout(0,true);" />
+    </div>
+
+    <div id="map" style="position: relative; top: 85px;"></div>
+
+
+    <div id="plot">
+        <canvas id="bar-chart" width="50" height="20"></canvas>
+    </div>
+
+
+    <script>
+
+$(document).ready( function () {
+    $('#table_id').DataTable();
+} );
+        var minyear = period.minYear;
+        var maxyear = period.maxYear;
+        millsecs = 1200;
+        var pause = true;
+
+        function tooglebuttonstate() {
+            if (pause == false) {
+                pause = true;
+            } else {
+                pause = false;
+            };
+        };
+
+        function timeout(i, clickme) {
+
+            if (clickme == true) {
+                document.getElementById("btnvideo").value = "Stop Video";
+                tooglebuttonstate();
+            };
+
+
+            if (pause == true) {
+                document.getElementById("btnvideo").value = "Replay Video";
+                return;
+            };
+            if (pause == false) {
+
+                var newyear = minyear + i
+                ///when display all years, exit
+                if (newyear > maxyear) {
+                    document.getElementById("btnvideo").value = "Play Video";
+                    return;
+                };
+
+                setTimeout(function() {
+                    slidervar.noUiSlider.set([minyear, minyear + i]);
+                    i = i + 1;
+                    timeout(i, false); //recursive call    
+                }, millsecs);
+            };
+        }
+
+
+
+
+        var mbAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+            '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+            mbUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+
+        var grayscale = L.tileLayer(mbUrl, {
+                id: 'mapbox.light',
+                attribution: mbAttr
+            }),
+            streets = L.tileLayer(mbUrl, {
+                id: 'mapbox.streets',
+                attribution: mbAttr
+            });
+
+
+
+        //base map
+        var map = L.map('map', {
+            zoomControl: true,
+            maxZoom: 18,
+            layers: [streets]
+        });
+
+        var basemap_0 = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png');
+
+
+
+        var basemap_1 = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        })
+
+
+        //layer
+
+        function protecland_marker(feature, latlng) {
+            return L.circleMarker(latlng, {
+                radius: 4.0,
+                fillColor: '#ff531a',
+                color: '#1a1a00',
+                weight: 1,
+                opacity: 1.0,
+                fillOpacity: 0.5
+            })
+        }
+
+
+
+        function popplaces_marker(feature, latlng) {
+            return L.circleMarker(latlng, {
+                radius: 4.0,
+                fillColor: '#ff0000',
+                color: '#000066',
+                weight: 1,
+                opacity: 1.0,
+                fillOpacity: 0.8
+            })
+        }
+
+		
+		
+		//  ********************** Τόπος γέννησης ********************************
+        var popplaces = new L.geoJson(greeks_pois, {
+            //onEachFeature: pop_popplaces,
+            pointToLayer: popplaces_marker
+        });
+		
+        var cluster_popplaces = new L.MarkerClusterGroup({
+            spiderfyDistanceMultiplier: 2, //see discussion https://github.com/Leaflet/Leaflet.markercluster/issues/431
+            showCoverageOnHover: true,
+            maxClusterRadius: 20,
+            //disableClusteringAtZoom:18, 
+            chunkedLoading: true,
+            chunkInterval: 500
+        });
+        cluster_popplaces.addLayer(popplaces);
+        cluster_popplaces.addTo(map);
+        map.fitBounds(cluster_popplaces.getBounds());
+
+			
+		
+		//  ********************** Τόπος κατάταξης ********************************
+	    var katataksi = new L.geoJson(tafi_pois, {
+            //onEachFeature: pop_popplaces,
+            pointToLayer: popplaces_marker
+        });
+		
+		
+		var cluster_katataksi = new L.MarkerClusterGroup({
+            spiderfyDistanceMultiplier: 2, //see discussion https://github.com/Leaflet/Leaflet.markercluster/issues/431
+            showCoverageOnHover: true,
+            maxClusterRadius: 20,
+            //disableClusteringAtZoom:18, 
+            chunkedLoading: true,
+            chunkInterval: 500
+        });
+        cluster_katataksi.addLayer(katataksi);
+        cluster_katataksi.addTo(map);
+        //map.fitBounds(cluster_tafi.getBounds());
+		
+
+		//  ********************** Τόπος ταφής ********************************
+	    var tafi = new L.geoJson(tafi_pois, {
+            //onEachFeature: pop_popplaces,
+            pointToLayer: popplaces_marker
+        });
+		
+		var cluster_tafi = new L.MarkerClusterGroup({
+            spiderfyDistanceMultiplier: 2, //see discussion https://github.com/Leaflet/Leaflet.markercluster/issues/431
+            showCoverageOnHover: true,
+            maxClusterRadius: 20,
+            //disableClusteringAtZoom:18, 
+            chunkedLoading: true,
+            chunkInterval: 500
+        });
+        cluster_tafi.addLayer(tafi);
+        cluster_tafi.addTo(map);
+        //map.fitBounds(cluster_tafi.getBounds());
+		
+		//  ********************** Τόπος θανάτου ********************************
+	    var thanatos = new L.geoJson(thanatos_pois, {
+            //onEachFeature: pop_popplaces,
+            pointToLayer: popplaces_marker
+        });
+		
+		var cluster_thanatos = new L.MarkerClusterGroup({
+            spiderfyDistanceMultiplier: 2, //see discussion https://github.com/Leaflet/Leaflet.markercluster/issues/431
+            showCoverageOnHover: true,
+            maxClusterRadius: 20,
+            //disableClusteringAtZoom:18, 
+            chunkedLoading: true,
+            chunkInterval: 500
+        });
+        cluster_thanatos.addLayer(thanatos);
+        cluster_thanatos.addTo(map);
+        //map.fitBounds(cluster_tafi.getBounds());
+		
+		
+		
+       
+
+       var baseLayers = {
+           "Grayscale": grayscale,
+           "Streets" : streets
+       };
+
+	
+        var baseMaps = {
+            'OSM Black & White': basemap_0,
+            'OSM': basemap_1
+        };
+		
+        controler = L.control.layers(baseLayers, {
+			"Τόπος γέννησης" : cluster_popplaces,
+			"Τόπος κατάταξης" : cluster_katataksi,
+			"Τόπος θανάτου" : cluster_thanatos,
+			"Τόπος ταφής" : cluster_tafi,
+			
+			},{collapsed: false }).addTo(map);
+
+        cluster_popplaces.on('mouseover', function(e) {
+            //open popup;
+            var popup = L.popup()
+                .setLatLng(e.latlng)
+                .setContent(labels.popName + ": " + e.layer.feature.properties.Name + "<br>" +
+                    labels.popDateSt + ": " + e.layer.feature.properties.Date_st + "<br>" +
+                    labels.popDateEnd + ": " + e.layer.feature.properties.Date_end + "<br>" +
+                    labels.popAddress + ": " + e.layer.feature.properties.Full_Addre + "<br>"
+                )
+                .openOn(map);
+        });
+
+
+
+
+        var slidervar = document.getElementById('slider');
+        slidervar.style.height = '10px';
+        //range.style.margin = '0 auto 30px';
+        slidervar.style.margin = '0 70px 30px';
+        noUiSlider.create(slidervar, {
+            connect: true,
+            behaviour: 'tap-drag', // Move handle on tap, bar is draggable
+            step: 1,
+
+            format: wNumb({
+                decimals: 0
+            }),
+            tooltips: true,
+            start: [minyear, maxyear],
+            range: {
+                min: minyear,
+                max: maxyear
+            },
+            pips: { // Show a scale with the slider
+                mode: 'steps',
+                stepped: true,
+                density: 8
+            }
+        });
+
+
+        slidervar.noUiSlider.on('update', function(values, handle) {
+
+
+            rangeMin = slider.noUiSlider.get()[0];
+            rangeMax = slider.noUiSlider.get()[1];
+
+            //first let's clear the layer:
+            cluster_popplaces.clearLayers();
+
+            //and repopulate it
+            popplaces = new L.geoJson(greeks_pois, {
+                //onEachFeature: pop_popplaces,
+                filter: function(feature, layer) {
+                    return (feature.properties.Date_st <= rangeMax) && (feature.properties.Date_end >= rangeMin);
+                },
+                pointToLayer: popplaces_marker
+            })
+            //console.log(map.getBounds().getEast());
+            //and back again into the cluster group
+            cluster_popplaces.addLayer(popplaces);
+
+            if (rangeMin == rangeMax) {
+                document.getElementById("period").innerHTML = labels.datayear + rangeMin + ", (Points:" + cluster_popplaces.getLayers().length + ")";
+
+            } else {
+                document.getElementById("period").innerHTML = labels.dataperiod + rangeMin + "-" + rangeMax + ", (" + labels.points + cluster_popplaces.getLayers().length + ")";
+            }
+
+
+        });
+
+
+        var toggle = L.easyButton({
+            states: [{
+                    stateName: 'play',
+                    icon: 'fa-play',
+                    title: 'Play movie',
+                    onClick: function(control) {
+                        timeout(0, true);
+                        control.state('pause');
+                    }
+                }, {
+                    icon: 'fa-pause',
+                    stateName: 'pause',
+                    onClick: function(control) {
+                        timeout(0, true);
+                        control.state('replay');
+                    },
+                    title: 'Stop movie'
+                },
+                {
+                    icon: 'fa-undo',
+                    stateName: 'replay',
+                    onClick: function(control) {
+                        timeout(0, true);
+                        control.state('pause');
+                    },
+                    title: 'Replay movie'
+                },
+
+            ]
+        });
+
+        toggle.addTo(map);
+    </script>
+
+
+</body>
+
+</html>
