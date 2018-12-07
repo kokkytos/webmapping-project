@@ -380,7 +380,7 @@ padding: 10px 10px;
 
         function death_marker(feature, latlng) {
 
-	    return  L.marker(latlng, {icon: blackIcon});
+	    return  L.marker(latlng, {icon: orangeIcon});
         }
 
 
@@ -424,7 +424,7 @@ padding: 10px 10px;
         //  ********************** recruit_death********************************
         var recruitdeath = new L.geoJson(recruitdeath_pois,
 				 {onEachFeature: popup_lines, 
-				 color: 'red',
+				 color: 'blue',
 				 weight:1}		
 		);
 		
@@ -498,11 +498,12 @@ padding: 10px 10px;
         };
 
         controler = L.control.layers(baseLayers, {
-        "<img src='leaflet-color-markers/img/marker-icon-2x-blue.png' height=24>Current place of settlement": cluster_popplaces,
-	    "<img src='leaflet-color-markers/img/marker-icon-2x-green.png' height=24>First place of settlement": cluster_recruitment,
-       "<img src='leaflet-color-markers/img/marker-icon-2x-black.png' height=24>Place of origin/residence": cluster_thanatos,
-        "Place of origin/residence-First place of settlement": birthrecruit,
-	    "Origin to First Place":recruitdeath, 
+        "<img src='leaflet-color-markers/img/marker-icon-2x-orange.png' height=24>Place of origin/residence": cluster_thanatos,
+        "<img src='leaflet-color-markers/img/marker-icon-2x-blue.png' height=24>First place of settlement": cluster_popplaces,
+	"<img src='leaflet-color-markers/img/marker-icon-2x-green.png' height=24>Current place of settlement": cluster_recruitment,
+	"Place of origin/residence to First place of settlement ":recruitdeath,         
+        "First place of settlement to Current place of settlement": birthrecruit,
+	
 
         }, {
             collapsed: false
