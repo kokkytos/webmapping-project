@@ -19,8 +19,8 @@ Last_name:"Last name",
 First_name:"First name", 
 Year_of_bi:"Year of birth", 
 F6:"F6", 
-Place_of_o:"Place of origin", 
-First_plac:"First place", 
-Current_pl:"Current place"
+Place_of_o:"Place of origin/residence", 
+First_plac:"First place of settlement", 
+Current_pl:"Current place of settlement"
 
 };
