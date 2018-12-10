@@ -20,3 +20,13 @@ font-family: 'Bowlby One', cursive;
 
     text-align: center;
 }
+
+h1 {
+font-family: consolas;
+  border: 1px solid #1a1a00;
+  border-radius: 0px;
+  margin: 0;
+  padding: 10px 0;
+background-color: #ebebe0;
+}
+
