@@ -3,9 +3,9 @@
 <head> 
 <title></title> 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.1.0/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
 <link rel="stylesheet" href="../src/leaflet-search.css" />
-<link rel="stylesheet" href="../style.css" />
+<link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
@@ -20,7 +20,7 @@ Example: <i>pizza</i>, <i>vege</i>, <i>japa</i>, <i>giappo</i>, <i>cucina romana
 </div>
 
 
-<script src="https://unpkg.com/leaflet@1.1.0/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
 <script src="../src/leaflet-search.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/fuse.js/1.2.2/fuse.min.js"></script>
@@ -31,7 +31,7 @@ Example: <i>pizza</i>, <i>vege</i>, <i>japa</i>, <i>giappo</i>, <i>cucina romana
 	var map = L.map('map', {
 			zoom: 12,
 			center: new L.latLng(41.8990, 12.4977),
-			layers: L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+			layers: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 		});
 	
 	var restLayers = L.geoJson(restaurant500, {
@@ -56,7 +56,13 @@ Example: <i>pizza</i>, <i>vege</i>, <i>japa</i>, <i>giappo</i>, <i>cucina romana
 		}).addTo(map);
 
 	var fuse = new Fuse(restaurant500.features, {
-		keys: ['properties.name', 'properties.cuisine']
+		keys: [
+			'properties.name',
+			'properties.description',
+			'properties.cuisine',
+			'properties.note',
+			//'properties.operator'
+		]
 	});
 
 	L.control.search({
@@ -83,7 +89,7 @@ Example: <i>pizza</i>, <i>vege</i>, <i>japa</i>, <i>giappo</i>, <i>cucina romana
 
 </script>
 
-<div id="copy"><a href="http://labs.easyblog.it/">Labs</a> &bull; <a rel="author" href="http://labs.easyblog.it/stefano-cudini/">Stefano Cudini</a></div>
+<div id="copy"><a href="https://opengeo.tech/">Website</a> &bull; <a rel="author" href="https://opengeo.tech/stefano-cudini/">Stefano Cudini</a></div>
 
 <script type="text/javascript" src="/labs-common.js"></script>
 

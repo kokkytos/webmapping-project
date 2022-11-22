@@ -5,6 +5,7 @@
 	 search:locationfound	{latlng, title, layer} fired after moved and show markerLocation
 	 search:expanded		{}					   fired after control was expanded
 	 search:collapsed		{}					   fired after control was collapsed
+ 	 search:cancel			{}					   fired after cancel button clicked
 
 	Public methods:
 	 setLayer()				L.LayerGroup()         set layer search at runtime
@@ -182,6 +183,11 @@ L.Control.Search = L.Control.extend({
 		// 		'layeradd': this._onLayerAddRemove,
 		// 		'layerremove': this._onLayerAddRemove
 		// 	}, this);
+		map.off({
+			// 		'layeradd': this._onLayerAddRemove,
+			// 		'layerremove': this._onLayerAddRemove
+			'resize': this._handleAutoresize
+			}, this);
 	},
 
 	// _onLayerAddRemove: function(e) {
@@ -223,6 +229,7 @@ L.Control.Search = L.Control.extend({
 		this._input.focus();
 		this._cancel.style.display = 'none';
 		this._hideTooltip();
+		this.fire('search:cancel');
 		return this;
 	},
 	
@@ -285,6 +292,7 @@ L.Control.Search = L.Control.extend({
 	},
 
 	_createInput: function (text, className) {
+		var self = this;
 		var label = L.DomUtil.create('label', className, this._container);
 		var input = L.DomUtil.create('input', className, this._container);
 		input.type = 'text';
@@ -305,6 +313,11 @@ L.Control.Search = L.Control.extend({
 		L.DomEvent
 			.disableClickPropagation(input)
 			.on(input, 'keyup', this._handleKeypress, this)
+			.on(input, 'paste', function(e) {
+				setTimeout(function(e) {
+					self._handleKeypress(e);
+				},10,e);
+			}, this)
 			.on(input, 'blur', this.collapseDelayed, this)
 			.on(input, 'focus', this.collapseDelayedStop, this);
 		
@@ -401,21 +414,24 @@ L.Control.Search = L.Control.extend({
 
 	_defaultFilterData: function(text, records) {
 	
-		var I, icase, regSearch, frecords = {};
+		var init, icase, regSearch, frecords = {};
 
-		text = text.replace(/[.*+?^${}()|[\]\\]/g, '');  //sanitize remove all special characters
-		if(text==='')
+		text = text.replace(/[.*+?^${}()|[\]\\]/g, '');
+		//sanitize remove all special characters
+
+		if(text==='') {
 			return [];
+		}
 
-		I = this.options.initial ? '^' : '';  //search only initial text
+		init = this.options.initial ? '^' : '';
 		icase = !this.options.casesensitive ? 'i' : undefined;
 
-		regSearch = new RegExp(I + text, icase);
+		regSearch = new RegExp(init + text, icase);
 
-		//TODO use .filter or .map
-		for(var key in records) {
-			if( regSearch.test(key) )
+		for (let key in records) {
+			if( regSearch.test(key) ) {
 				frecords[key]= records[key];
+			}
 		}
 		
 		return frecords;
@@ -423,17 +439,17 @@ L.Control.Search = L.Control.extend({
 
 	showTooltip: function(records) {
 		
-
 		this._countertips = 0;
 		this._tooltip.innerHTML = '';
 		this._tooltip.currentSelection = -1;  //inizialized for _handleArrowSelect()
 
 		if(this.options.tooltipLimit)
 		{
-			for(var key in records)//fill tooltip
+			for (let key in records)	//fill tooltip
 			{
-				if(this._countertips === this.options.tooltipLimit)
+				if(this._countertips === this.options.tooltipLimit) {
 					break;
+				}
 				
 				this._countertips++;
 
@@ -445,13 +461,15 @@ L.Control.Search = L.Control.extend({
 		{
 			this._tooltip.style.display = 'block';
 			
-			if(this._autoTypeTmp)
+			if(this._autoTypeTmp) {
 				this._autoType();
+			}
 
 			this._autoTypeTmp = this.options.autoType;//reset default value
 		}
-		else
+		else {
 			this._hideTooltip();
+		}
 
 		this._tooltip.scrollTop = 0;
 
@@ -468,14 +486,18 @@ L.Control.Search = L.Control.extend({
 		var self = this,
 			propName = this.options.propertyName,
 			propLoc = this.options.propertyLoc,
-			i, jsonret = {};
+			jsonret = {};
 
-		if( L.Util.isArray(propLoc) )
-			for(i in json)
-				jsonret[ self._getPath(json[i],propName) ]= L.latLng( json[i][ propLoc[0] ], json[i][ propLoc[1] ] );
-		else
-			for(i in json)
+		if( L.Util.isArray(propLoc) ) {
+			for (let i in json) {
+				jsonret[ self._getPath(json[i],propName) ]= L.latLng( self._getPath(json[i], propLoc[0]), self._getPath(json[i], propLoc[1]) );
+			}
+		}
+		else {
+			for (let i in json) {
 				jsonret[ self._getPath(json[i],propName) ]= L.latLng( self._getPath(json[i],propLoc) );
+			}
+		}
 		//TODO throw new Error("propertyName '"+propName+"' not found in JSON data");
 		return jsonret;
 	},
@@ -548,7 +570,7 @@ L.Control.Search = L.Control.extend({
         console.warn("propertyName '"+propName+"' not found in marker"); 
       }
     }
-    if(layer instanceof L.Path || layer instanceof L.Polyline || layer instanceof L.Polygon)
+    else if(layer instanceof L.Path || layer instanceof L.Polyline || layer instanceof L.Polygon)
     {
       if(self._getPath(layer.options,propName))
       {
@@ -668,9 +690,11 @@ L.Control.Search = L.Control.extend({
 				this.collapse();
 			break;
 			case 13://Enter
-				if(this._countertips == 1 || (this.options.firstTipSubmit && this._countertips > 0))
-          if(this._tooltip.currentSelection == -1)
-					  this._handleArrowSelect(1);
+				if(this._countertips == 1 || (this.options.firstTipSubmit && this._countertips > 0)) {
+          			if(this._tooltip.currentSelection == -1) {
+						this._handleArrowSelect(1);
+          			}
+				}
 				this._handleSubmit();	//do search
 			break;
 			case 38://Up
@@ -692,7 +716,6 @@ L.Control.Search = L.Control.extend({
 			case 36://Home
 			break;
 			default://All keys
-
 				if(this._input.value.length)
 					this._cancel.style.display = 'block';
 				else
@@ -759,7 +782,7 @@ L.Control.Search = L.Control.extend({
 
 			this._curReq = this._retrieveData.call(this, inputText, function(data) {
 				
-				self._recordsCache = self._formatData.call(this, data);
+				self._recordsCache = self._formatData.call(self, data);
 
 				//TODO refact!
 				if(self.options.sourceData)
@@ -774,21 +797,30 @@ L.Control.Search = L.Control.extend({
 		}
 	},
 	
-	_handleAutoresize: function() {	//autoresize this._input
-	    //TODO refact _handleAutoresize now is not accurate
-	    if (this._input.style.maxWidth != this._map._container.offsetWidth) //If maxWidth isn't the same as when first set, reset to current Map width
-	        this._input.style.maxWidth = L.DomUtil.getStyle(this._map._container, 'width');
+	_handleAutoresize: function() {
+	    var maxWidth;
 
-		if(this.options.autoResize && (this._container.offsetWidth + 45 < this._map._container.offsetWidth))
-			this._input.size = this._input.value.length<this._inputMinSize ? this._inputMinSize : this._input.value.length;
+		if (this._input.style.maxWidth !== this._map._container.offsetWidth) {
+			maxWidth = this._map._container.clientWidth;
+
+			// other side margin + padding + width border + width search-button + width search-cancel
+			maxWidth -= 10 + 20 + 1 + 30 + 22; 
+
+			this._input.style.maxWidth = maxWidth.toString() + 'px';
+		}
+
+		if (this.options.autoResize && (this._container.offsetWidth + 20 < this._map._container.offsetWidth)) {
+			this._input.size = this._input.value.length < this._inputMinSize ? this._inputMinSize : this._input.value.length;
+		}
 	},
 
 	_handleArrowSelect: function(velocity) {
 	
 		var searchTips = this._tooltip.hasChildNodes() ? this._tooltip.childNodes : [];
 			
-		for (i=0; i<searchTips.length; i++)
+		for (let i=0; i<searchTips.length; i++) {
 			L.DomUtil.removeClass(searchTips[i], 'search-tip-select');
+		}
 		
 		if ((velocity == 1 ) && (this._tooltip.currentSelection >= (searchTips.length - 1))) {// If at end of list.
 			L.DomUtil.addClass(searchTips[this._tooltip.currentSelection], 'search-tip-select');
@@ -832,8 +864,9 @@ L.Control.Search = L.Control.extend({
 			{
 				var loc = this._getLocation(this._input.value);
 				
-				if(loc===false)
+				if(!loc) {
 					this.showAlert();
+				}
 				else
 				{
 					this.showLocation(loc, this._input.value);

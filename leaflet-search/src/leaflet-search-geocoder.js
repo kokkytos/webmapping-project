@@ -1,4 +1,15 @@
+/*
+this file is work in progress and represent an extension 
+of the main plugin to support programmatically most famous geocoder services
 
+the base idea is:
+- any geocoder services is identified by name passed to the plugin option
+- any geocoder sub module implemnt custom parameters anc a custom callback to extract resulta in leaflet search format result
+- any geocoder accept only two parameters, api key and user key, passed to remote service
+
+any contributions is welcome <3
+
+*/
 (function (factory) {
     if(typeof define === 'function' && define.amd) {
     //AMD
@@ -27,18 +38,31 @@ L.Control.Search.include({
 		console.log('Geocoder',this.options)
 	},*/
 	geocoders: {
-/*		'google': {
-			url: "//maps.googleapis.com/maps/api/geocode/json?key={key}&address={text}"
-		},
-		'nominatim': {
-			    
+    /*
+        'google': {
+        	urlTmpl: "//maps.googleapis.com/maps/api/geocode/json?key={key}&address={text}"
+          //todo others
+        },
+        'here': {
+        	urlTmpl: https://geocoder.ls.hereapi.com/6.2/geocode.json?apiKey={apiKey}&searchtext={text}"
+          params: function(opts, text) {
+            
+            //opts is leaflet options input
+            //text is input text searched
 
-	      format: 'json',
-	      q: query,
-	    });
-
-    		"//nominatim.openstreetmap.org/search?"
-		}*/
+            return {
+              'apiKey': opts.apikey,
+              'format': 'json',
+              'q': text,
+        			'jsonp': 'herejsoncallback',
+            };
+          },
+          callback: function(resp) {
+              //TODO refact resp data
+          }
+        	
+        		"//nominatim.openstreetmap.org/search?"
+        }*/
 	}
 });
 
