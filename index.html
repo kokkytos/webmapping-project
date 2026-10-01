@@ -7,17 +7,12 @@
     <link href="https://fonts.googleapis.com/css?family=Bowlby+One" rel="stylesheet">
     <link rel="stylesheet" href="leaflet/leaflet.css" />
 
-
     <link rel="stylesheet" href="Leaflet.EasyButton/src/easy-button.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-
-
 
     <script src="leaflet/leaflet.js"></script>
 
     <link href="style.css" rel="stylesheet" type="text/css">
-
 
     <script src="Leaflet.EasyButton/src/easy-button.js"></script>
 
@@ -27,43 +22,28 @@
 
     <link rel="stylesheet" href="noUiSlider/nouislider.min.css" />
     <script src="data/settings.js"></script>
-    <!--<script src="noUiSlider/nouislider.min.js"></script>-->
 
     <script src="leaflet-color-markers/js/leaflet-color-markers.js"></script>
-
-    <!--<script src="wNumb/wNumb.js"></script>-->
-
 
     <script src="data/birth_recruit.js"></script>
     <script src="data/thanatos.js"></script>
     <script src="data/recruitment.js"></script>
     <script src="data/recruit_death.js"></script>
 
-
-
-
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
-
 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/af-2.2.2/b-1.5.1/b-colvis-1.5.1/b-html5-1.5.1/cr-1.4.1/fc-3.2.4/fh-3.1.3/kt-2.3.2/r-2.2.1/rg-1.0.2/rr-1.2.3/sc-1.4.4/sl-1.2.5/datatables.min.css" />
 
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/af-2.2.2/b-1.5.1/b-colvis-1.5.1/b-html5-1.5.1/cr-1.4.1/fc-3.2.4/fh-3.1.3/kt-2.3.2/r-2.2.1/rg-1.0.2/rr-1.2.3/sc-1.4.4/sl-1.2.5/datatables.min.js"></script>
 
-
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.dataTables.min.css" />
 
     <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
 
-
     <script src="dataobj.js"></script>
-
 
     <style>
         body {
@@ -100,150 +80,87 @@
 
 </head>
 
-
 <body>
 
     <script>
         $(document).ready(function() {
             var events = $('#events');
             var table = $('#example').DataTable({
-                // δες για geojson εδώ:https://datatables.net/forums/discussion/40910/parsing-geojson-in-datatables
-                //ajax: {
-                //	url:'data.geojson',
-                //	dataSrc: 'features'
-                //  },
-
-                data: recruitment_pois.features, //δες για Javascript object εδώ https://datatables.net/examples/data_sources/js_array.html
+                data: recruitment_pois.features,
                 "columns": [
-                    //sos για να εμφανιστούν οι στήλες αυτές πρέπει να υπάρχουν στο αρχείο json ή στο data object
-                    //{ "data": "properties.id" }, //uncomment to show in datatables, check also to <th> tag of table 
-
-                    {
-                        "data": "properties.aa"
-                    },
-                    {
-                        "data": "properties.Last_name"
-                    },
-                    {
-                        "data": "properties.First_name"
-                    },
-                    {
-                        "data": "properties.Year_of_bi"
-                    },
-                    {
-                        "data": "properties.Place_of_o"
-                    },
-                    {
-                        "data": "properties.First_plac"
-                    },
-                    {
-                        "data": "properties.Current_pl"
-                    },
-
-
-
+                    { "data": "properties.aa" },
+                    { "data": "properties.Last_name" },
+                    { "data": "properties.First_name" },
+                    { "data": "properties.Year_of_bi" },
+                    { "data": "properties.Place_of_o" },
+                    { "data": "properties.First_plac" },
+                    { "data": "properties.Current_pl" }
                 ],
                 "scrollY": "200px",
                 "scrollCollapse": true,
-                "paging": true, //set to false to enable scrollbars
+                "paging": true,
                 select: true,
                 language: {
                     "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/French.json"
                 },
                 fnInitComplete: function() {
-                    $("#example_wrapper").hide(); //hide the datatables wrapper
+                    $("#example_wrapper").hide();
                 },
                 dom: 'Bfrtip',
                 buttons: [{
                     text: 'Clear selection',
                     action: function(e, dt, node, config) {
-                        dt.rows().deselect()
+                        dt.rows().deselect();
                         cluster_popplaces.clearLayers();
-                        //cluster_recruitment.clearLayers();
-                        //cluster_thanatos.clearLayers();
 
-                        //and repopulate it
-                        popplaces = new L.geoJson(greeks_pois, {
-                            //onEachFeature: pop_popplaces,
-                            //pointToLayer: popplaces_marker
-                        })
-                        //console.log(map.getBounds().getEast());
-                        //and back again into the cluster group
+                        popplaces = new L.geoJson(greeks_pois, {});
                         cluster_popplaces.addLayer(popplaces);
-
-
 
                         cluster_recruitment.clearLayers();
                         recruitment = new L.geoJson(recruitment_pois, {
-                            //onEachFeature: pop_popplaces,
                             pointToLayer: recruit_marker
-                        })
+                        });
                         cluster_recruitment.addLayer(recruitment);
-
 
                         cluster_thanatos.clearLayers();
                         thanatos = new L.geoJson(thanatos_pois, {
-                            //onEachFeature: pop_popplaces,
                             pointToLayer: death_marker
                         });
                         cluster_thanatos.addLayer(thanatos);
-
-
-
-
                     }
-                }],
+                }]
             });
 
-
-            //function to filter line features
-
             function lineFilter(feature) {
-                if (feature.properties.aa === filterval) return true
+                if (feature.properties.aa === filterval) return true;
             }
 
-
-            //on datatable selection
             table
-                .on('select', function(e, dt, type, indexes) { //event όταν επιλέγο μια γραμμή στον πίνακα
+                .on('select', function(e, dt, type, indexes) {
                     var flag1 = false;
                     if (map.hasLayer(birthrecruit)) {
-                        flag1 = true
-                    };
+                        flag1 = true;
+                    }
                     myData.clearLayers();
                     map.removeLayer(myData);
 
-
-
                     var flag4 = false;
                     if (map.hasLayer(recruitdeath)) {
-                        flag4 = true
-                    };
+                        flag4 = true;
+                    }
                     myData2.clearLayers();
                     map.removeLayer(myData2);
 
-
-                    //var rowData = table.rows(indexes).data().toArray();
                     var rowData = table.rows({
                         selected: true
                     }).data().toArray();
 
+                    filterval = rowData[0].properties.aa;
 
-
-
-                    filterval = rowData[0].properties.aa
-
-
-
-
-                    //  ********************** Τόπος κατάταξης ********************************
                     birthrecruit = new L.geoJson(birthrecruit_pois, {
-
                         onEachFeature: popup_lines,
-
                         filter: lineFilter
-                    }, );
-
+                    });
 
                     myData.addLayer(birthrecruit);
 
@@ -253,20 +170,12 @@
                     });
                     if (flag1 === true) {
                         myData.addTo(map);
+                    }
 
-                    };
-
-
-
-
-                    //  **********************  ********************************
                     recruitdeath = new L.geoJson(recruitdeath_pois, {
-
                         onEachFeature: popup_lines,
-
                         filter: lineFilter
-                    }, );
-
+                    });
 
                     myData2.addLayer(recruitdeath);
 
@@ -276,181 +185,88 @@
                     });
                     if (flag4 === true) {
                         myData2.addTo(map);
+                    }
 
-                    };
-
-
-                    //console.log(indexes);
-                    //console.log(table.rows( { selected: true } ).data().toArray());
-
-                    //console.log(rowData[0].properties.id);
-
-                    //first let's clear the layers:
                     cluster_popplaces.clearLayers();
                     cluster_recruitment.clearLayers();
-                    //cluster_birthrecruit.clearLayers();
                     cluster_thanatos.clearLayers();
 
-                    //and repopulate it
                     popplaces = new L.geoJson(greeks_pois, {
-                        //onEachFeature: pop_popplaces,
                         filter: function(feature, layer) {
-
-
-
                             for (var i = 0; i < rowData.length; i += 1) {
-                                console.log(rowData[i].properties.aa)
-                                if (feature.properties.aa === rowData[i].properties.aa) return true
-
-
+                                if (feature.properties.aa === rowData[i].properties.aa) return true;
                             }
-
-
-
-                        } //,pointToLayer: popplaces_marker
-                    })
-                    //console.log(map.getBounds().getEast());
-
-                    //and back again into the cluster group
+                        }
+                    });
                     cluster_popplaces.addLayer(popplaces);
 
-
-
-
-                    //and repopulate it
                     recruitment = new L.geoJson(recruitment_pois, {
-                        //onEachFeature: pop_popplaces,
                         filter: function(feature, layer) {
                             for (var i = 0; i < rowData.length; i += 1) {
-                                console.log(rowData[i].properties.aa)
-                                if (feature.properties.aa === rowData[i].properties.aa) return true
+                                if (feature.properties.aa === rowData[i].properties.aa) return true;
                             }
                         },
                         pointToLayer: recruit_marker
-                    })
-                    //console.log(map.getBounds().getEast());
-
-                    //and back again into the cluster group
+                    });
                     cluster_recruitment.addLayer(recruitment);
 
-
-                    //and repopulate it
                     thanatos = new L.geoJson(thanatos_pois, {
-                        //onEachFeature: pop_popplaces,
                         filter: function(feature, layer) {
                             for (var i = 0; i < rowData.length; i += 1) {
-                                console.log(rowData[i].properties.aa)
-                                if (feature.properties.aa === rowData[i].properties.aa) return true
+                                if (feature.properties.aa === rowData[i].properties.aa) return true;
                             }
                         },
                         pointToLayer: death_marker
-                    })
-                    //console.log(map.getBounds().getEast());
-
-                    //and back again into the cluster group
+                    });
                     cluster_thanatos.addLayer(thanatos);
-
-
-
-
-                    //and repopulate it
-                    //            controler.removeLayer(birthrecruit)
-                    //       birthrecruit = new L.geoJson(birthrecruit_pois, {
-                    //onEachFeature: pop_popplaces,
-                    //        filter: function(feature, layer) {			
-                    //			for (var i = 0; i < rowData.length; i += 1) {
-                    //                             console.log(rowData[i].properties.aa)
-                    //				if (feature.properties.aa === rowData[i].properties.aa) return true
-                    //				 }
-                    //				},
-                    //				color: 'green', weight:1
-                    //			    })
-
-                    //			    controler.addOverlay(birthrecruit, "birth_recruit_f");
-
-
-
-
                 })
 
                 .on('deselect', function(e, dt, type, indexes) {
                     var rowData = table.rows(indexes).data().toArray();
-                    console.log(JSON.stringify(rowData));
 
-                    //first let's clear the layers:
                     cluster_popplaces.clearLayers();
-                    //cluster_recruitment.clearLayers();
-                    //cluster_birthrecruit.clearLayers();
-                    //cluster_thanatos.clearLayers();
 
-                    //and repopulate it
                     popplaces = new L.geoJson(greeks_pois, {
-                        //onEachFeature: pop_popplaces,
                         pointToLayer: popplaces_marker
-                    })
-                    //console.log(map.getBounds().getEast());
-                    //and back again into the cluster group
-                    //cluster_popplaces.addLayer(popplaces);
-
-
-
-                    //  ********************** Τόπος κατάταξης ********************************
+                    });
 
                     var flag = false;
                     if (map.hasLayer(birthrecruit)) {
-                        flag = true
-                    };
+                        flag = true;
+                    }
 
                     myData.clearLayers();
                     map.removeLayer(myData);
 
-
                     var flag3 = false;
                     if (map.hasLayer(recruitdeath)) {
-                        flag3 = true
-                    };
+                        flag3 = true;
+                    }
                     myData2.clearLayers();
                     map.removeLayer(myData2);
 
+                    birthrecruit = new L.geoJson(birthrecruit_pois, {
+                        onEachFeature: popup_lines,
+                        color: 'green',
+                        weight: 1
+                    });
 
-                    birthrecruit = new L.geoJson(birthrecruit_pois, //{filter: lineFilter},
-                        {
-                            onEachFeature: popup_lines,
-                            color: 'green',
-                            weight: 1
-                        }
-                    );
-
-                    //myData = L.layerGroup([]);
                     myData.addLayer(birthrecruit);
                     if (flag === true) {
                         myData.addTo(map);
+                    }
 
-                    };
+                    recruitdeath = new L.geoJson(recruitdeath_pois, {
+                        onEachFeature: popup_lines,
+                        color: 'blue',
+                        weight: 1
+                    });
 
-
-
-
-                    recruitdeath = new L.geoJson(recruitdeath_pois, //{filter: lineFilter},
-                        {
-                            onEachFeature: popup_lines,
-                            color: 'blue',
-                            weight: 1
-                        }
-                    );
-
-                    //myData = L.layerGroup([]);
                     myData2.addLayer(recruitdeath);
                     if (flag3 === true) {
                         myData2.addTo(map);
-
-                    };
-
-
-
-
+                    }
                 });
-
         });
     </script>
 
@@ -471,43 +287,47 @@
     </table>
 
     <div id="map"></div>
-    <!-- <div id="map" style="position: relative; top: 85px;"></div> -->
-
 
     <script>
-	// See more: https://github.com/CartoDB/basemap-styles
-        var mbAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attribution">CARTO</a>',
-            mbUrl = 'https://{s}.basemaps.cartocdn.com/{style}/{z}/{x}/{y}.png';
+        // --- Updated Basemap Layer Definitions ---
+        var cartoAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
+        var osmAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-        var grayscale = L.tileLayer(mbUrl, {
-                style: 'light_all',
-                attribution: mbAttr
-            }),
-            mylayers = L.tileLayer(mbUrl, {
-                style: 'rastertiles/voyager',
-                attribution: mbAttr
-            });
+        // 1. CARTO Positron (Light)
+        var grayscale = L.tileLayer('https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_460k_1_8d68630b22a09470fb4d6bfa', {
+            attribution: cartoAttr,
+            subdomains: 'abcd',
+            maxZoom: 20
+        });
 
+        // 2. CARTO Voyager (Color)
+        var mylayers = L.tileLayer('https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_460k_1_8d68630b22a09470fb4d6bfa', {
+            attribution: cartoAttr,
+            subdomains: 'abcd',
+            maxZoom: 20
+        });
 
+        // 3. CARTO Dark Matter (Dark / Replacing broken toolserver B&W)
+        var basemap_0 = L.tileLayer('https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?key=cb1_460k_1_8d68630b22a09470fb4d6bfa', {
+            attribution: cartoAttr,
+            subdomains: 'abcd',
+            maxZoom: 20
+        });
 
-        // ************* base map **********************************************************************
+        // 4. Standard OpenStreetMap
+        var basemap_1 = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: osmAttr,
+            maxZoom: 19
+        });
+
+        // ************* Base Map Initialization ******************************************************
         var map = L.map('map', {
             zoomControl: true,
             maxZoom: 18,
             layers: [mylayers]
         });
 
-        var basemap_0 = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png');
-
-
-
-        var basemap_1 = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        })
-
-
-        // ***** layers marker ************************************************************************* 
-
+        // ***** Layers Marker Functions ********************************************************* 
 
         function popplaces_marker(feature, latlng) {
             return L.circleMarker(latlng, {
@@ -517,9 +337,8 @@
                 weight: 1,
                 opacity: 1.0,
                 fillOpacity: 0.8
-            })
+            });
         }
-
 
         function recruit_marker(feature, latlng) {
             return L.marker(latlng, {
@@ -527,24 +346,15 @@
             });
         }
 
-
         function death_marker(feature, latlng) {
-
             return L.marker(latlng, {
                 icon: orangeIcon
             });
         }
 
+        // ******************* GeoJSON Layers ****************************************************
 
-
-        // ******************* geoJson layers ********************************************************************
-
-        //  ********************** Τόπος γέννησης ********************************
-        var popplaces = new L.geoJson(greeks_pois, {
-            //onEachFeature: pop_popplaces,
-            //pointToLayer: popplaces_marker
-        });
-
+        var popplaces = new L.geoJson(greeks_pois, {});
 
         function popup_lines(feature, layer) {
             layer.bindPopup(
@@ -556,18 +366,11 @@
                 "<b>" + labels.First_plac + "</b>: " + feature.properties.First_plac + "<br>" +
                 "<b>" + labels.Current_pl + "</b>: " + feature.properties.Current_pl + "<br>"
             );
-        };
+        }
 
-
-
-        //  ********************** Τόπος κατάταξης ********************************
-        var birthrecruit = new L.geoJson(birthrecruit_pois, //{filter: lineFilter},
-            {
-                onEachFeature: popup_lines,
-                //      color: 'green',
-                //       weight: 1
-            }
-        );
+        var birthrecruit = new L.geoJson(birthrecruit_pois, {
+            onEachFeature: popup_lines
+        });
 
         var myData = L.featureGroup([birthrecruit],
             birthrecruit.setStyle({
@@ -575,113 +378,79 @@
                 weight: 1
             }));
 
-
-
-        //  ********************** recruitment_pois********************************
         var recruitment = new L.geoJson(recruitment_pois, {
-            //onEachFeature: pop_popplaces,
             pointToLayer: recruit_marker
         });
 
-        //  ********************** recruit_death********************************
         var recruitdeath = new L.geoJson(recruitdeath_pois, {
-            onEachFeature: popup_lines,
-            // color: 'blue',
-            //  weight: 1
+            onEachFeature: popup_lines
         });
+
         var myData2 = L.featureGroup([recruitdeath],
             recruitdeath.setStyle({
                 color: 'blue',
                 weight: 1
             }));
 
-        //  ********************** Τόπος θανάτου ********************************
         var thanatos = new L.geoJson(thanatos_pois, {
-            //onEachFeature: pop_popplaces,
             pointToLayer: death_marker
         });
 
-        //fit map to layers bounds
         map.fitBounds(L.featureGroup([popplaces, birthrecruit, recruitment, thanatos, recruitdeath]).getBounds());
 
-
-
-        // ******************* MarkerClusterGroups ********************************************************************
+        // ******************* MarkerClusterGroups ************************************************
         var cluster_popplaces = new L.MarkerClusterGroup({
-            spiderfyDistanceMultiplier: 2, //see discussion https://github.com/Leaflet/Leaflet.markercluster/issues/431
+            spiderfyDistanceMultiplier: 2,
             showCoverageOnHover: true,
             maxClusterRadius: 20,
-            //disableClusteringAtZoom:18, 
             chunkedLoading: true,
             chunkInterval: 500
         });
         cluster_popplaces.addLayer(popplaces);
-        //cluster_popplaces.addTo(map);
-        //map.fitBounds(cluster_popplaces.getBounds());
-
-
 
         var cluster_recruitment = new L.MarkerClusterGroup({
-            spiderfyDistanceMultiplier: 2, //see discussion https://github.com/Leaflet/Leaflet.markercluster/issues/431
+            spiderfyDistanceMultiplier: 2,
             showCoverageOnHover: true,
             maxClusterRadius: 20,
-            //disableClusteringAtZoom:18, 
             chunkedLoading: true,
             chunkInterval: 500
         });
         cluster_recruitment.addLayer(recruitment);
-        //cluster_recruitment.addTo(map);
-        //map.fitBounds(cluster_recruitment.getBounds());
-
-
 
         var cluster_thanatos = new L.MarkerClusterGroup({
-            spiderfyDistanceMultiplier: 2, //see discussion https://github.com/Leaflet/Leaflet.markercluster/issues/431
+            spiderfyDistanceMultiplier: 2,
             showCoverageOnHover: true,
             maxClusterRadius: 20,
-            //disableClusteringAtZoom:18, 
             chunkedLoading: true,
             chunkInterval: 500
         });
         cluster_thanatos.addLayer(thanatos);
         cluster_thanatos.addTo(map);
-        //map.fitBounds(cluster_recruitment.getBounds());
 
-
-
-
-        // **** control.layers settings *******************************************************
-
-        var baseLayers = {
-            "Grayscale basemap": grayscale,
-            "Colored basemap": mylayers
-        };
-
+        // **** Control.Layers Settings *******************************************************
 
         var baseMaps = {
-            'OSM Black & White': basemap_0,
-            'OSM': basemap_1
+            "CARTO Positron (Light)": grayscale,
+            "CARTO Voyager (Color)": mylayers,
+            "CARTO Dark Matter": basemap_0,
+            "OpenStreetMap": basemap_1
         };
 
-        controler = L.control.layers(baseLayers, {
+        var overlayMaps = {
             "<img src='leaflet-color-markers/img/marker-icon-2x-orange.png' height=24>Place of origin/residence": cluster_thanatos,
             "<img src='leaflet-color-markers/img/marker-icon-2x-blue.png' height=24>First place of settlement": cluster_popplaces,
             "<img src='leaflet-color-markers/img/marker-icon-2x-green.png' height=24>Current place of settlement": cluster_recruitment,
             "Place of origin/residence to First place of settlement ": myData2,
-            "First place of settlement to Current place of settlement": myData,
+            "First place of settlement to Current place of settlement": myData
+        };
 
-
-        }, {
+        controler = L.control.layers(baseMaps, overlayMaps, {
             collapsed: false
         }).addTo(map);
 
+        // *************** Cluster Click Events ***************************************************
 
-
-
-        // *************** cluster click events *******************************************************
-
-        cluster_popplaces.on('click', function(e) { //check also 'mouseover' event
-            //open popup;
+        cluster_popplaces.on('click', function(e) {
             var popup = L.popup()
                 .setLatLng(e.latlng)
                 .setContent(
@@ -692,16 +461,11 @@
                     "<b>" + labels.Place_of_o + "</b>: " + e.layer.feature.properties.Place_of_o + "<br>" +
                     "<b>" + labels.First_plac + "</b>: " + e.layer.feature.properties.First_plac + "<br>" +
                     "<b>" + labels.Current_pl + "</b>: " + e.layer.feature.properties.Current_pl + "<br>"
-
-
-
                 )
                 .openOn(map);
         });
 
-
-        cluster_recruitment.on('click', function(e) { //check also 'mouseover' event
-            //open popup;
+        cluster_recruitment.on('click', function(e) {
             var popup = L.popup()
                 .setLatLng(e.latlng)
                 .setContent(
@@ -712,15 +476,11 @@
                     "<b>" + labels.Place_of_o + "</b>: " + e.layer.feature.properties.Place_of_o + "<br>" +
                     "<b>" + labels.First_plac + "</b>: " + e.layer.feature.properties.First_plac + "<br>" +
                     "<b>" + labels.Current_pl + "</b>: " + e.layer.feature.properties.Current_pl + "<br>"
-
-
-
                 )
                 .openOn(map);
         });
 
-        cluster_thanatos.on('click', function(e) { //check also 'mouseover' event
-            //open popup;
+        cluster_thanatos.on('click', function(e) {
             var popup = L.popup()
                 .setLatLng(e.latlng)
                 .setContent(
@@ -731,25 +491,16 @@
                     "<b>" + labels.Place_of_o + "</b>: " + e.layer.feature.properties.Place_of_o + "<br>" +
                     "<b>" + labels.First_plac + "</b>: " + e.layer.feature.properties.First_plac + "<br>" +
                     "<b>" + labels.Current_pl + "</b>: " + e.layer.feature.properties.Current_pl + "<br>"
-
-
-
                 )
                 .openOn(map);
         });
 
-
-
-        // *********** Leaflet 
-
-        // ********** Zoom to home ****************************
+        // ********** EasyButtons *****************************************************************
 
         L.easyButton('fa-home', function(btn, map) {
             map.fitBounds(L.featureGroup([popplaces, birthrecruit, recruitment, thanatos, recruitdeath]).getBounds());
         }, 'Zoom To Home').addTo(map);
 
-
-        // ********** button to show/hide data table **********
         var pause = true;
 
         function tooglebuttonstate() {
@@ -757,58 +508,48 @@
                 pause = true;
             } else {
                 pause = false;
-            };
-        };
+            }
+        }
 
         function timeout(i, clickme) {
-
             if (clickme == true) {
                 tooglebuttonstate();
-            };
+            }
 
             if (pause == true) {
                 $("#example_wrapper").hide();
                 return;
-            };
+            }
             if (pause == false) {
-
                 $("#example_wrapper").show();
                 $('html, body').animate({
                     scrollTop: $("#example_wrapper").offset().top
                 }, 2000);
-
-
-
-            };
+            }
         }
-
-
 
         var toggle = L.easyButton({
             states: [{
-                    stateName: 'play',
-                    icon: '<img src="filter-and-sort-arrows.svg" style="width:16px">',
-                    title: 'Filter data',
-                    onClick: function(control) {
-                        timeout(0, true);
-                        control.state('pause');
-                    }
-                }, {
-                    icon: '<img src="filter-and-sort-arrows.svg" style="width:16px">',
-                    stateName: 'pause',
-                    onClick: function(control) {
-                        timeout(0, true);
-                        control.state('replay');
-                    },
-                    title: 'Filter data'
+                stateName: 'play',
+                icon: '<img src="filter-and-sort-arrows.svg" style="width:16px">',
+                title: 'Filter data',
+                onClick: function(control) {
+                    timeout(0, true);
+                    control.state('pause');
+                }
+            }, {
+                icon: '<img src="filter-and-sort-arrows.svg" style="width:16px">',
+                stateName: 'pause',
+                onClick: function(control) {
+                    timeout(0, true);
+                    control.state('replay');
                 },
-
-            ]
+                title: 'Filter data'
+            }]
         });
 
         toggle.addTo(map);
     </script>
-
 
 </body>
 
